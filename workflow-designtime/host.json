@@ -1,7 +1,21 @@
 {
   "version": "2.0",
   "extensionBundle": {
+<<<<<<< HEAD
     "id": "Microsoft.Azure.Functions.ExtensionBundle",
     "version": "[1.*, 2.0.0)"
   }
 }
+=======
+    "id": "Microsoft.Azure.Functions.ExtensionBundle.Workflows",
+    "version": "[1.*, 2.0.0)"
+  },
+  "extensions": {
+    "workflow": {
+      "settings": {
+        "Runtime.WorkflowOperationDiscoveryHostMode": "true"
+      }
+    }
+  }
+}
+>>>>>>> master
