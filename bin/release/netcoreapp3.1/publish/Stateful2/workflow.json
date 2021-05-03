@@ -1,0 +1,165 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Get_messages_from_a_topic_subscription_(peek-lock)": {
+                "type": "ApiConnection",
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "referenceName": "servicebus"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/@{encodeURIComponent(encodeURIComponent('supbus01-sbt-topic01-p'))}/subscriptions/@{encodeURIComponent('topic01-sbs-sub02-p')}/messages/batch/peek",
+                    "queries": {
+                        "maxMessageCount": 20,
+                        "subscriptionType": "Main",
+                        "sessionId": ""
+                    }
+                },
+                "runAfter": {}
+            },
+            "For_each": {
+                "type": "Foreach",
+                "foreach": "@body('Get_messages_from_a_topic_subscription_(peek-lock)')",
+                "actions": {
+                    "Parse_JSON": {
+                        "type": "ParseJson",
+                        "inputs": {
+                            "content": "@json(decodeBase64(items('For_each')['ContentData']))",
+                            "schema": {
+                                "items": {
+                                    "properties": {
+                                        "Grad": {
+                                            "type": "string"
+                                        },
+                                        "Källa": {
+                                            "type": "string"
+                                        },
+                                        "Nederbörd": {
+                                            "type": "string"
+                                        },
+                                        "Tid": {
+                                            "type": "string"
+                                        },
+                                        "Vindstyrka": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "Tid",
+                                        "Grad",
+                                        "Nederbörd",
+                                        "Vindstyrka",
+                                        "Källa"
+                                    ],
+                                    "type": "object"
+                                },
+                                "type": "array"
+                            }
+                        },
+                        "runAfter": {}
+                    },
+                    "Create_CSV_table": {
+                        "type": "Table",
+                        "inputs": {
+                            "from": "@body('Parse_JSON')",
+                            "format": "CSV",
+                            "columns": [
+                                {
+                                    "header": "Tid",
+                                    "value": "@item()['Tid']"
+                                },
+                                {
+                                    "header": "Grad",
+                                    "value": "@item()['Grad']"
+                                },
+                                {
+                                    "header": "Nederbörd",
+                                    "value": "@item()['Nederbörd']"
+                                },
+                                {
+                                    "header": "Vindstyrka",
+                                    "value": "@item()['Vindstyrka']"
+                                },
+                                {
+                                    "header": "Källa",
+                                    "value": "@item()['Källa']"
+                                }
+                            ]
+                        },
+                        "runAfter": {
+                            "Parse_JSON": [
+                                "Succeeded"
+                            ]
+                        }
+                    },
+                    "Create_file": {
+                        "type": "ApiConnection",
+                        "inputs": {
+                            "host": {
+                                "connection": {
+                                    "referenceName": "filesystem"
+                                }
+                            },
+                            "method": "post",
+                            "body": "@body('Create_CSV_table')",
+                            "headers": {
+                                "ReadFileMetadataFromServer": true
+                            },
+                            "path": "/datasets/default/files",
+                            "queries": {
+                                "folderPath": "/",
+                                "name": "weatherdata",
+                                "queryParametersSingleEncoded": true
+                            }
+                        },
+                        "runAfter": {
+                            "Create_CSV_table": [
+                                "Succeeded"
+                            ]
+                        }
+                    },
+                    "Complete_the_message_in_a_topic_subscription": {
+                        "type": "ApiConnection",
+                        "inputs": {
+                            "host": {
+                                "connection": {
+                                    "referenceName": "servicebus"
+                                }
+                            },
+                            "method": "delete",
+                            "path": "/@{encodeURIComponent(encodeURIComponent('supbus01-sbt-topic01-p'))}/subscriptions/@{encodeURIComponent('topic01-sbs-sub02-p')}/messages/complete",
+                            "queries": {
+                                "lockToken": "@items('For_each')?['LockToken']",
+                                "subscriptionType": "Main",
+                                "sessionId": ""
+                            }
+                        },
+                        "runAfter": {
+                            "Create_file": [
+                                "Succeeded"
+                            ]
+                        }
+                    }
+                },
+                "runAfter": {
+                    "Get_messages_from_a_topic_subscription_(peek-lock)": [
+                        "Succeeded"
+                    ]
+                }
+            }
+        },
+        "triggers": {
+            "manual": {
+                "type": "Request",
+                "kind": "Http",
+                "inputs": {}
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {}
+    },
+    "kind": "Stateful"
+}

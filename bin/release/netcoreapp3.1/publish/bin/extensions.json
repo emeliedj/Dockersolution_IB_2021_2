@@ -1,0 +1,11 @@
+{
+  "extensions":[
+    { "name": "EventHubs", "typeName":"Microsoft.Azure.WebJobs.EventHubs.EventHubsWebJobsStartup, Microsoft.Azure.WebJobs.EventHubs, Version=4.1.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"},
+    { "name": "ServiceBus", "typeName":"Microsoft.Azure.WebJobs.ServiceBus.ServiceBusWebJobsStartup, Microsoft.Azure.WebJobs.ServiceBus, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"},
+    { "name": "EventHubsServiceProvider", "typeName":"Microsoft.Azure.Workflows.ServiceProviders.EventHubs.Initialization.EventHubsServiceProviderStartup, Microsoft.Azure.Workflows.ServiceProviders.EventHubs.Extension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"},
+    { "name": "MqServiceProvider", "typeName":"Microsoft.Azure.Workflows.ServiceProviders.Mq.Initialization.MqServiceProviderStartup, Microsoft.Azure.Workflows.ServiceProviders.Mq.Extension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"},
+    { "name": "ServiceBusServiceProvider", "typeName":"Microsoft.Azure.Workflows.ServiceProviders.ServiceBus.Initialization.ServiceBusServiceProviderStartup, Microsoft.Azure.Workflows.ServiceProviders.ServiceBus.Extension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"},
+    { "name": "SqlServiceProvider", "typeName":"Microsoft.Azure.Workflows.ServiceProviders.Sql.Initialization.SqlServiceProviderStartup, Microsoft.Azure.Workflows.ServiceProviders.Sql.Extension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"},
+    { "name": "WorkflowExtension", "typeName":"Microsoft.Azure.Workflows.WebJobs.Extensions.Initialization.WorkflowExtensionStartup, Microsoft.Azure.Workflows.WebJobs.Extensions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"}
+  ]
+}
